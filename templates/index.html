@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Resume Analyzer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <h1>AI Resume Analyzer</h1>
+      <p class="subtitle">Upload your resume PDF and compare it with a job description</p>
+
+      <label>Resume PDF</label>
+      <input type="file" id="resumePdf" accept=".pdf">
+
+      <label>Job Description</label>
+      <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
+
+      <button onclick="analyzeResume()">Analyze Resume</button>
+
+      <div id="result" class="result-box">
+        Your analysis result will appear here.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function analyzeResume() {
+      const resumePdf = document.getElementById("resumePdf").files[0];
+      const jobDescription = document.getElementById("jobDescription").value;
+      const resultBox = document.getElementById("result");
+
+      if (!resumePdf) {
+        alert("Please upload a resume PDF");
+        return;
+      }
+
+      if (!jobDescription.trim()) {
+        alert("Please paste the job description");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("resume_pdf", resumePdf);
+      formData.append("job_description", jobDescription);
+
+      resultBox.innerHTML = "Analyzing your resume...";
+
+      const response = await fetch("/analyze", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      resultBox.innerHTML = "<pre>" + data.result + "</pre>";
+    }
+  </script>
+</body>
+</html>
